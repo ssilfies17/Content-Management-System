@@ -66,6 +66,25 @@ async function viewAllDepartments() {
     askStartQuestion();
 };
 
+async function viewAllEmployees() {
+    try {
+        var results = await db.query(`
+        SELECT employees.id, employees.first_name, employees.last_name, roles.salary, roles.job_title, departments.department_name, managers.first_name AS manager_first_name, managers.last_name AS manager_last_name 
+        FROM employees 
+        LEFT JOIN roles ON employees.role_id = roles.id 
+        LEFT JOIN departments ON employees.department_id = departments.id 
+        LEFT JOIN employees managers ON employees.manager_id = managers.id;`);
+
+        console.table(results);
+
+    } catch (err) {
+
+        console.error(err);
+    }
+
+    askStartQuestion();
+};
+
 async function viewAllRoles() {
     try {
         var results = await db.query('SELECT * FROM roles;');
