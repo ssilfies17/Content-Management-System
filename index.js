@@ -99,3 +99,5 @@ async function viewAllRoles() {
     askStartQuestion();
 };
 
+
+askStartQuestion();
