@@ -120,13 +120,74 @@ async function addDepartment() {
         ]
     );
     try {
-        db.query(`INSERT INTO departments (department_name) VALUES ("${department}")`, );
+        await db.query(`INSERT INTO departments (department_name) VALUES ("${department}")`, );
 
         console.log(`${department} added to Departments.`);
     } catch (err) {
-        
+
         console.error(err);
     }
+    askStartQuestion();
+};
+
+async function addRole() {
+    
+    let departments = await db.query('SELECT * FROM departments;');
+
+    let departmentList = departments.map(department => {
+        return { name: department.department_name, value: department.id } ;
+    });
+
+    const { job_title, salary, department_id } = await inquirer.prompt(
+        [
+            {
+                type: "input",
+                message: "Please enter title of the new role.",
+                name: "job_title",
+                    validate: function (answer) {
+                        if (answer.length < 3) {
+
+                            return console.log("Please enter a role name.");
+                        }
+                        return true;
+                    }
+            },
+            {
+                type: "input",
+                message: "Please enter salary of the new role.",
+                name: "salary",
+                    validate: function (answer) {
+                        if (answer.length < 3) {
+
+                            return console.log("Please enter this role's salary.");
+                        }
+                        return true;
+                    }
+            },
+            {
+                type: "list",
+                message: "Please select a department for role.",
+                choices: departmentList,
+                name: "department_id",
+                    validate: function (answer) {
+                        if (!answer) {
+                            
+                            return console.log("Please select the role's department.");
+                        }
+                        return true;
+                    }
+            }
+        ]
+    );
+
+    try {
+        await db.query(`INSERT INTO roles (job_title, salary, department_id) VALUES ("${job_title}", "${salary}", "${department_id}")`);
+
+        console.log(`${job_title} added to Roles.`);
+       
+    } catch(err) {
+        console.error(err);
+    };
     askStartQuestion();
 };
 
