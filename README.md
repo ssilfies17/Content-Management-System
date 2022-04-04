@@ -6,7 +6,7 @@ A go-to command-line application to help a business manage it's employee databas
 
 >Check out this video demo for a better insight to how this baby works!
 
-** Demonstration Link: [DEMO]() **
+** Demonstration Link: [DEMO](https://www.awesomescreenshot.com/video/8213909?key=738b0b3b93f9c19239523a1cee951682) **
 
 ## Table of Contents
 
