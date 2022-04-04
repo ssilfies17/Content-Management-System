@@ -62,7 +62,7 @@ async function viewAllDepartments() {
     } catch (err) {
 
         console.error(err);
-    }
+    };
 
     askStartQuestion();
 };
@@ -81,7 +81,7 @@ async function viewAllEmployees() {
     } catch (err) {
 
         console.error(err);
-    }
+    };
 
     askStartQuestion();
 };
@@ -95,7 +95,7 @@ async function viewAllRoles() {
     } catch (err) {
 
         console.error(err);
-    }
+    };
 
     askStartQuestion();
 };
@@ -126,7 +126,8 @@ async function addDepartment() {
     } catch (err) {
 
         console.error(err);
-    }
+    };
+
     askStartQuestion();
 };
 
@@ -171,7 +172,7 @@ async function addRole() {
                 name: "department_id",
                     validate: function (answer) {
                         if (!answer) {
-                            
+
                             return console.log("Please select the role's department.");
                         }
                         return true;
@@ -188,7 +189,114 @@ async function addRole() {
     } catch(err) {
         console.error(err);
     };
+
     askStartQuestion();
 };
+
+async function addEmployee() {
+
+    let roles = await db.query('SELECT id, job_title FROM roles;');
+
+    let roleList = roles.map(role => {
+        return { name: role.job_title, value: role.id };
+    });
+
+
+    let departments = await db.query('SELECT * FROM departments;');
+
+    let departmentList = departments.map(department => {
+        return { name: department.department_name, value: department.id };
+    });
+
+
+    let managers = await db.query('SELECT id, first_name, last_name FROM employees;');
+
+    let managerList = managers.map(manager => {
+        return { name: manager.first_name + ' ' + manager.last_name, value: manager.id };
+    });
+
+
+    const { first_name, last_name, role_id, department_id, manager_id } = await inquirer.prompt(
+        [
+            {
+                type: "input",
+                message: "Please enter employee's first name.",
+                name: "first_name",
+                    validate: function (answer) {
+                        if (answer.length < 2) {
+
+                            return console.log("Please enter name.");
+                        }
+                        return true;
+                    }
+            },
+            {
+                type: "input",
+                message: "Please enter employee's last name.",
+                name: "last_name",
+                    validate: function (answer) {
+                        if (answer.length < 2) {
+
+                            return console.log("Please enter name.");
+                        }
+                        return true;
+                    }
+            },
+            {
+                type: "list",
+                message: "Please select a role for employee.",
+                choices: roleList,
+                name: "role_id",
+                    validate: function (answer) {
+                        if (!answer) {
+
+                            return console.log("Please select role.");
+                        }
+                        return true;
+                    }
+            },
+            {
+                type: "list",
+                message: "Please select a department for employee.",
+                choices: departmentList,
+                name: "department_id",
+                    validate: function (answer) {
+                        if (!answer) {
+
+                            return console.log("Please select department.");
+                        }
+                        return true;
+                    }
+            },
+            {
+                type: "list",
+                message: "Please select employee's manager.",
+                choices: managerList,
+                name: "manager_id",
+                    validate: function (answer) {
+                        if (!answer) {
+
+                            return console.log("Please select a manager.");
+                        }
+                        return true;
+                    }
+            },
+        ]
+    );
+
+    try {
+        await db.query(`INSERT INTO employees (first_name, last_name, role_id, department_id, manager_id) VALUES ("${first_name}", "${last_name}", "${role_id}", "${department_id}", "${manager_id}");`);
+
+        console.log(`${first_name} ${last_name} added to Employees.`);
+        
+    } catch(err) {
+
+        console.error(err);
+    };
+
+    askStartQuestion();
+}
+
+
 
 askStartQuestion();
