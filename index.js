@@ -52,6 +52,7 @@ function askStartQuestion() {
 };
 
 
+
 async function viewAllDepartments() {
     try {
         var results = await db.query('SELECT * FROM departments;');
@@ -99,5 +100,34 @@ async function viewAllRoles() {
     askStartQuestion();
 };
 
+
+
+async function addDepartment() {
+    const { department } = await inquirer.prompt(
+        [
+            {
+            type: "input",
+            message: "Please enter department name you want to add.",
+            name: "department",
+                validate: function (answer) {
+                    if (answer.length < 3) {
+
+                        return console.log("Please enter a department name you'd like to add.");
+                    }
+                    return true;
+                }
+            }
+        ]
+    );
+    try {
+        db.query(`INSERT INTO departments (department_name) VALUES ("${department}")`, );
+
+        console.log(`${department} added to Departments.`);
+    } catch (err) {
+        
+        console.error(err);
+    }
+    askStartQuestion();
+};
 
 askStartQuestion();
