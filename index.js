@@ -295,8 +295,67 @@ async function addEmployee() {
     };
 
     askStartQuestion();
-}
+};
 
+async function updateEmployee() {
+
+    let employees = await db.query('SELECT id, first_name, last_name FROM employees;');
+
+    let employeesList = employees.map(employee => {
+        return { name: employee.first_name + ' ' + employee.last_name, value: employee.id };
+    });
+
+
+    let roles = await db.query('SELECT id, job_title FROM roles;');
+
+    let roleList = roles.map(role => {
+        return { name: role.job_title, value: role.id };
+    });
+
+
+    const { employee_id, role_id } = await inquirer.prompt(
+        [
+            {
+                type: "list",
+                message: "Please choose employee you want to update.",
+                choices: employeesList,
+                name: "employee_id",
+                    validate: function (answer) {
+                        if (answer.length < 3) {
+
+                            return console.log("Please choose an employee.");
+                        }
+                        return true;
+                    }
+                },
+            {
+            type: "list",
+            message: "Please choose employee role.",
+            choices: roleList,
+            name: "role_id",
+                validate: function (answer) {
+                    if (answer.length < 3) {
+
+                        return console.log("Please choose employee role.");
+                    }
+                    return true;
+                }
+            }
+        ]
+    );
+
+    try {
+        await db.query(`UPDATE employees SET role_id = ("${role_id}") WHERE id = "${employee_id}";`);
+
+        console.log(`${employee_id} updated.`);
+
+    } catch (err) {
+        
+        console.error(err);
+    };
+
+    askStartQuestion();
+};
 
 
 askStartQuestion();
